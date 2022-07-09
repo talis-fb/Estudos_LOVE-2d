@@ -39,10 +39,10 @@ function love.load()
     local middleScreenY = love.graphics.getHeight() / 2
 
     local playerHeight = 150
-    local playerWidth = 50
+    local playerWidth = 30
 
-    local ballWidth = 20
-    local ballHeight = 20
+    local ballWidth = 10
+    local ballHeight = 10
 
     player1 = Player({
         x = 10,
@@ -69,25 +69,24 @@ function love.load()
 end
 
 function love.update(dt)
-    if isKeyDown('w') then
-        player1:moveUp(500 * dt)
-    elseif isKeyDown('s') then
-        player1:moveDown(500 * dt)
-    end
-
-    if isKeyDown('up') then
-        player2:moveUp(500 * dt)
-    elseif isKeyDown('down') then
-        player2:moveDown(500 * dt)
-    end
-
     if isKeyDown('q') then
         love.event.quit()
     end
 
-    ball:move(dt)
+    if isKeyDown('w') then
+        player1:moveUp(700 * dt)
+    elseif isKeyDown('s') then
+        player1:moveDown(700 * dt)
+    end
+
+    if isKeyDown('up') then
+        player2:moveUp(700 * dt)
+    elseif isKeyDown('down') then
+        player2:moveDown(700 * dt)
+    end
 
     if isCollision(player1, ball) or isCollision(player2,ball) then
+        ball:increaseVelocity(75,75)
         ball:changeDirectionX()
     end
 
@@ -95,9 +94,7 @@ function love.update(dt)
         ball:changeDirectionY()
     end
 
-    -- local mouseX,mouseY = love.mouse.getPosition()
-    -- retangulo1:setPosition(mouseX,mouseY)
-
+    ball:move(dt)
 end
 
 function love.draw()
@@ -106,6 +103,7 @@ function love.draw()
     player1:draw()
     player2:draw()
     ball:draw()
+    love.graphics.print( 'FPS: ' .. tostring(love.timer.getFPS()), 10, 10  )
 end
 
 function love.quit()
