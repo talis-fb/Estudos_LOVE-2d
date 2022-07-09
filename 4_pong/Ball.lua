@@ -16,6 +16,11 @@ function Ball:setPosition(x,y)
     self.y = y
 end
 
+function Ball:center()
+    self.x = love.graphics.getWidth() / 2
+    self.y = love.graphics.getHeight() / 2
+end
+
 function Ball:setRandomVelocity()
     local newVeloY = math.random(-1,1) * 100
 
@@ -59,7 +64,17 @@ function Ball:move(dt)
 end
 
 function Ball:isOutScreen()
-    return self.y < 0 or self.y > (love.graphics.getHeight() - self.width)
+    return self.y < 0 or self.y >= (love.graphics.getHeight() - self.height)
+end
+
+function Ball:isWin()
+    if  self.x < 0 then
+        return 2
+    elseif self.x > (love.graphics.getWidth() - self.width) then
+        return 1
+    else
+        return 0
+    end
 end
 
 function Ball:draw()

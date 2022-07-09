@@ -1,11 +1,12 @@
 -- Necessario como depedencia para usar classes
--- require("color")
 Class = require("class")
-
 Player = require"Player"
 Ball = require"Ball"
-
 math.randomseed(os.time())
+
+-- ----------------
+-- METHODS
+-- ----------------
 
 -- AABB Collision Algorithm
 local isCollision = function(body1, body2)
@@ -20,9 +21,13 @@ function isKeyDown(key)
     return love.keyboard.isDown(key)
 end
 
+-- ----------------
+-- Variaveis globais
+-- ----------------
 local player1
 local player2
 local ball
+local state = 'START'
 
 -- LOVE...
 function love.load()
@@ -64,14 +69,35 @@ function love.load()
         height = ballHeight,
         width = ballWidth
     })
-
-    ball:setRandomVelocity()
+    ball:center()
 end
 
 function love.update(dt)
+
+    if state == "START" then
+        if isKeyDown('return') then
+            ball:setRandomVelocity()
+            state = "RUNNING"
+        else
+            return
+        end
+    end
+
+    if ball:isWin() == 1 then
+        player1.score = player1.score + 1
+        state = "START"
+        ball:center()
+    elseif ball:isWin() == 2 then
+        player2.score = player2.score + 1
+        state = "START"
+        ball:center()
+    end
+
     if isKeyDown('q') then
         love.event.quit()
+        return
     end
+
 
     if isKeyDown('w') then
         player1:moveUp(700 * dt)
@@ -92,17 +118,35 @@ function love.update(dt)
 
     if ball:isOutScreen() then
         ball:changeDirectionY()
+        ball:move(dt)
     end
 
     ball:move(dt)
+
 end
 
 function love.draw()
-    -- local color = isCollision(retangulo1,retangulo2) and hex(255,23,68) or hex(118,255,3)
-    -- love.graphics.setColor(color)
+    local width = love.graphics.getWidth()
+    local height = love.graphics.getHeight()
+
+
+    love.graphics.setNewFont(80)
+    love.graphics.print( player1.score, width/2 - 280, height/4 )
+    love.graphics.print( player2.score, width/2 + 200, height/4 )
+
+    love.graphics.setNewFont(20)
+
+    if state == "START" then
+        love.graphics.printf( 'Aperte ENTER para começar',               0 ,  height/2,        width  , "center"  )
+        love.graphics.printf( 'Jogador da esquerda: W / S',              0 , (height/2) + 30,  width , "center"  )
+        love.graphics.printf( 'Jogador da direita: ArrowUp / ArrowDown', 0 , (height/2) + 60, width , "center"  )
+    end
+
     player1:draw()
     player2:draw()
     ball:draw()
+
+    love.graphics.setNewFont(15)
     love.graphics.print( 'FPS: ' .. tostring(love.timer.getFPS()), 10, 10  )
 end
 

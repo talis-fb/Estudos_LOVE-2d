@@ -6,6 +6,7 @@ function Player:init(options)
     self.y = options.y
     self.width = options.width
     self.height = options.height
+    self.score = 0
 end
 
 function Player:setPosition(x,y)
@@ -25,6 +26,10 @@ end
 
 function Player:draw()
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+end
+
+function Player:scoreUp()
+    self.score = self.score + 1
 end
 
 
